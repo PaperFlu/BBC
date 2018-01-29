@@ -1,0 +1,185 @@
+/* COPYRIGHT
+* Author: Wang Hua
+* License: MIT
+* Version: 1.1365-20180126
+* 
+* 
+*/
+:root {
+	--primary-color: #F06292;
+
+	--standard-curve: cubic-bezier(.4,0,.2,1);
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	width: 100vw;
+	height: 100vh;
+	margin: 0;
+	background: #fff;
+	overflow: hidden;
+	font-family: Roboto, Microsoft JhengHei, Arial, sans-serif;
+	user-select: none;
+}
+
+canvas {
+	position: absolute;
+	left: 0;top: 0;
+	display: block;
+	transform: translate3d(0,0,0);
+	transform-origin: 0 0;
+}
+#livings {
+	width: 100vw;
+	height: 100vh;
+}
+
+#mask {
+	position: absolute;
+	left: 0;top: 0;
+	display: flex;
+	justify-content: center;
+	/*align-items: center;*/
+	width: 100%;
+	height: 100%;
+	/*background: rgba(255,255,255,.15);*/
+}
+
+#waiter {
+	--size: 36px;
+	--margin: 24px;
+	position: absolute;
+	left: 0;top: 0;
+	margin: var(--margin);
+	width: var(--size);
+	height: var(--size);
+	background: var(--primary-color) url(pause.svg);
+	border-radius: 50%;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+	transform: scale(0);
+	transition: transform var(--standard-curve) 300ms;
+	cursor: pointer;
+}
+.playing #waiter {
+	/*background: rgba(0,0,0,.15);*/
+	transform: scale(1);
+}
+
+#menu {
+	width: 28%;
+	min-width: 360px;
+	height: 100%;
+	overflow: hidden;
+	background: var(--primary-color);
+	box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+	color: #fff;
+	font-size: 16px;
+	font-weight: 700;
+	transition: opacity var(--standard-curve) 190ms;
+
+	--entrance-height: 156px;
+}
+.playing #menu {
+	/*background: rgba(0,0,0,.15);*/
+	pointer-events: none;
+	opacity: 0;
+}
+
+#menu > div {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	width: 100%;
+	height: calc((100% - var(--entrance-height)) / 6);
+	padding: 16px;
+	border-bottom: 1px solid rgba(0, 0, 0, .06);
+}
+#menu > div.entrance {
+	flex-wrap: nowrap;
+	justify-content: space-between;
+	height: var(--entrance-height);
+	font-size: 1.6em;
+	cursor: pointer;
+} div.entrance > svg {
+	width: 1.2em;
+	height: 1.2em;
+	animation: 400ms var(--standard-curve) welcome infinite alternate;
+} @keyframes welcome {
+	0%,10% {
+		transform: translate(0,0);
+	}
+	100% {
+		transform: translate(-8px,0);
+	}
+}
+
+#menu > div > div.slider {
+	--track-height: .15em;
+	position: relative;
+	display: flex;
+	align-items: center;
+	width: 100%;
+	height: var(--track-height);
+	background: rgba(0,0,0,.13);
+	border-radius: 3px;
+	transition: background var(--standard-curve) 170ms;
+
+	--position: calc(var(--value) / (var(--value-max) - var(--value-min)) * 100%);
+}
+#menu > div > div.slider:active {
+	background: rgba(0,0,0,.18);
+}
+div.slider::before,div.slider::after {
+	background: #EC407A;
+	cursor: pointer;
+}
+div.slider::before {
+	display: block;
+	content: '';
+	width: var(--position);
+	height: 100%;
+}
+div.slider::after {
+	--size: calc(var(--track-height) * 6);
+	position: relative;
+	left: calc(-1 * var(--size) / 2);
+	display: block;
+	content: '';
+	width: var(--size);
+	height: var(--size);
+	border-radius: 50%;
+	transform: scale(1);
+	transition: all var(--standard-curve) 170ms;
+}
+div.slider:active::after {
+	transform: scale(0);
+}
+div.slider > span {
+	--font-size: .7em;
+	--height: calc(var(--track-height) * 32);
+	--width: calc(var(--height) * 0.8);
+	--mask: url(bubble.svg) no-repeat;
+	position: absolute;
+	left: var(--position);
+	bottom: 0;
+	display: block;
+	width: var(--width);
+	height: var(--height);
+	background: #EC407A;
+	-webkit-mask: var(--mask);
+	-webkit-mask: var(--mask);
+	transform: translate(calc(-1 * var(--width) / 2),0) scale(0);
+	transform-origin: 50% 100%;
+	transition: all var(--standard-curve) 170ms;
+	text-align: center;
+	line-height: var(--width);
+	font-size: var(--font-size);
+	font-weight: 400;
+}
+div.slider:active > span {
+	bottom: calc(var(--track-height) * 6);
+	transform: translate(calc(-1 * var(--width) / 2),0) scale(1);
+}

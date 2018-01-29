@@ -1,0 +1,27 @@
+{
+	"school": {
+		"name": "海南省农垦中学",
+		"path": "image.2.svg",
+		"width": "600%"
+	},
+	"state": {
+		"rotate": 25,
+		"x": "56%",
+		"y": "16%"
+	},
+	"people": {
+		"normalRadius": 16,
+		"color": {
+			"boys": "#03A9F4", "_Light Blue": 500,
+			"girls": "#BDBDBD", "_Grey": 400,
+			"range": 0.3
+		},
+		"me": {
+			"name": "Paper",
+			"letter": "M",
+			"sex": "female",
+			"charisma": 98,
+			"direction": 148
+		}
+	}
+}
