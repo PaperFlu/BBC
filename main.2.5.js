@@ -1,10 +1,13 @@
 /* COPYRIGHT
 * Author: Wang Hua
 * License: MIT
-* Version: 1.1754-20180128
+* Version: 1.2145-20180130
 * 
 * 
 */
+let rootPath = window.location.pathname;
+rootPath.endsWith('/') && (rootPath = rootPath.slice(0,-1));
+
 const mask = document.getElementById('mask');
 const waiter = document.getElementById('waiter');
 const menu = document.getElementById('menu');
@@ -47,13 +50,13 @@ schoolImage.onload = load;
 
 let people = {};
 
-fetch(`/${mod}/settings.json`).then((res) => {
+fetch(`${rootPath}/${mod}/settings.json`).then((res) => {
 	if (res.ok) {
 		res.json().then((data) => {
 			settings = data;
 			people.me = settings.people.me;
 			people.me.speed = 0;
-			schoolImage.src = `/${mod}/${settings.school.path}`
+			schoolImage.src = `${rootPath}/${mod}/${settings.school.path}`
 		});
 	} else {
 		message(`读取校园模组时出现错误。状态${res.status}`);
