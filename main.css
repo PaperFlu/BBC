@@ -1,10 +1,11 @@
-/* COPYRIGHT
-* Author: Wang Hua
-* License: MIT
-* Version: 1.1365-20180126
-* 
-* 
-*/
+/**
+ * COPYRIGHT
+ * @Author: Wang Hua
+ * @License: MIT
+ * @Version: 1.1373-20180202
+ * 
+ * 
+ */
 :root {
 	--primary-color: #F06292;
 
@@ -48,15 +49,18 @@ canvas {
 	/*background: rgba(255,255,255,.15);*/
 }
 
+#mask > * {
+	position: absolute;
+	left: 0;top: 0;
+}
+
 #waiter {
 	--size: 36px;
 	--margin: 24px;
-	position: absolute;
-	left: 0;top: 0;
 	margin: var(--margin);
 	width: var(--size);
 	height: var(--size);
-	background: var(--primary-color) url(pause.svg);
+	background: var(--primary-color) url(./svg/Pause.svg);
 	border-radius: 50%;
 	box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
 	transform: scale(0);
@@ -64,13 +68,14 @@ canvas {
 	cursor: pointer;
 }
 .playing #waiter {
-	/*background: rgba(0,0,0,.15);*/
 	transform: scale(1);
 }
 
 #menu {
-	width: 28%;
-	min-width: 360px;
+	display: flex;
+	flex-direction: column;
+	width: 24%;
+	min-width: 330px;
 	height: 100%;
 	overflow: hidden;
 	background: var(--primary-color);
@@ -78,32 +83,38 @@ canvas {
 	color: #fff;
 	font-size: 16px;
 	font-weight: 700;
-	transition: opacity var(--standard-curve) 190ms;
-
-	--entrance-height: 156px;
+	transform: translate3d(0,0,0);
+	transition: all var(--standard-curve) 190ms;
 }
 .playing #menu {
-	/*background: rgba(0,0,0,.15);*/
+	transform: translate3d(-100%,0,0);
 	pointer-events: none;
 	opacity: 0;
 }
 
 #menu > div {
 	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
+	flex-direction: column;
+	justify-content: space-between;
 	width: 100%;
-	height: calc((100% - var(--entrance-height)) / 6);
+	height: 100%;
 	padding: 16px;
 	border-bottom: 1px solid rgba(0, 0, 0, .06);
 }
+
+div.entrance, div.about {
+	flex-shrink: 0;
+}
+
 #menu > div.entrance {
-	flex-wrap: nowrap;
-	justify-content: space-between;
-	height: var(--entrance-height);
+	flex-direction: row;
+	align-items: center;
+	height: 156px;
 	font-size: 1.6em;
 	cursor: pointer;
-} div.entrance > svg {
+}
+#menu > div.entrance > img {
+	fill: #fff;
 	width: 1.2em;
 	height: 1.2em;
 	animation: 400ms var(--standard-curve) welcome infinite alternate;
@@ -114,6 +125,10 @@ canvas {
 	100% {
 		transform: translate(-8px,0);
 	}
+}
+
+#menu > div.about {
+	height: 64px;
 }
 
 #menu > div > div.slider {
@@ -182,4 +197,11 @@ div.slider > span {
 div.slider:active > span {
 	bottom: calc(var(--track-height) * 6);
 	transform: translate(calc(-1 * var(--width) / 2),0) scale(1);
+}
+
+#menu > div > span {
+	display: block;
+	width: 100%;
+	font-size: .8em;
+	color: #ddd;
 }

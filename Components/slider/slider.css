@@ -1,17 +1,20 @@
-/* COPYRIGHT
-* Author: Wang Hua
-* License: MIT
-* Version: 1.1457-20180127
-* 
-* 
-*/
+/**
+ * COPYRIGHT
+ * @Author: Wang Hua
+ * @License: MIT
+ * @Version: 1.1458-20180130
+ * 
+ * 
+ */
 :host {
 	--track-height: .15em;
+	all: initial;
 	position: relative;
 	display: flex;
 	align-items: center;
 	width: 100%;
 	height: var(--track-height);
+	contain: layout style;
 	background: rgba(0,0,0,.13);
 	border-radius: 3px;
 	transition: background var(--standard-curve) 170ms;
@@ -66,8 +69,10 @@
 	transition: transform var(--standard-curve) 170ms;
 	text-align: center;
 	line-height: var(--width);
+	font-family: Roboto, Arial, sans-serif;
 	font-size: var(--font-size);
 	font-weight: 400;
+	color: #fff;
 }
 :host(:active) .valuer {
 	transform: translate(calc(-1 * var(--width) / 2),calc(var(--track-height) * -6)) scale(1);
