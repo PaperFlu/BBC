@@ -1,12 +1,11 @@
 /**
- * @module SliderDiscrete
  * @version: 1.1637-20180204
  */
 
 /**
  * A power of ten which multiplied is a integer by the specified number.
- * @param {Number} num
- * @returns {Number} - A power of ten.
+ * @param {number} num
+ * @returns {number} - A power of ten.
  */
 const toIntegerFactor = function aPowerOfTen(num) {
   const decimalPart = num.toString().split('.')[1];
@@ -17,8 +16,8 @@ const toIntegerFactor = function aPowerOfTen(num) {
 
 /**
  * Minutes in the time.
- * @param {String} time - Time, it may be 6:24.
- * @returns {Number}
+ * @param {string} time - Time, it may be 6:24.
+ * @returns {number}
  */
 const minutesFromTime = function totalNumberOfMinutes(time) {
   const timeArray = time.split(':');
@@ -27,8 +26,8 @@ const minutesFromTime = function totalNumberOfMinutes(time) {
 
 /**
  * Convert to time format.
- * @param {Number} minutes
- * @returns {String}
+ * @param {number} minutes
+ * @returns {string}
  */
 const timeFromMinutes = function convertToTimeFormat(minutes) {
   const hours = Math.floor(minutes / 60);
@@ -36,6 +35,9 @@ const timeFromMinutes = function convertToTimeFormat(minutes) {
   return `${hours}:${min}`;
 };
 
+/**
+ * @class
+ */
 class SliderDiscrete extends HTMLElement {
   constructor() {
     super();
@@ -73,20 +75,21 @@ class SliderDiscrete extends HTMLElement {
   /**
    * Notes the slider.
    * @param {MouseEvent} e
+   * @param {number} e.screenX
    * @event SliderDiscrete#onMouseDown
    */
-  onMouseDown(e) {
-    this.X = e.screenX;
+  onMouseDown({ screenX }) {
+    this.X = screenX;
     this.constructor.current = this;
   }
 
   /**
    * Count the new value.
-   * @param {Number} screenX
+   * @param {MouseEvent} e
+   * @param {number} e.screenX
    * @event document~onMouseMove
    */
   static onMouseMove({ screenX }) {
-    /** @type {SliderDiscrete} */
     const currentSlider = this.current;
 
     // Stop if no slider is sliding.
@@ -130,6 +133,12 @@ class SliderDiscrete extends HTMLElement {
     this.current = null;
   }
 
+  /**
+   * Legalize the value if it is illegal.
+   * @param {number} value
+   * @param {number[]} range - Legal range.
+   * @returns {number}
+   */
   static checkValue(value, [valueMin, valueMax]) {
     let checkedValue = value;
 
@@ -142,6 +151,10 @@ class SliderDiscrete extends HTMLElement {
     return checkedValue;
   }
 
+  /**
+   * Set the related property value by a countable number.
+   * @param {Object} properties
+   */
   setPropertiesFromCountable(properties) {
     Object.keys(properties).forEach((propertyName) => {
       const countableValue = properties[propertyName];
@@ -159,6 +172,10 @@ class SliderDiscrete extends HTMLElement {
     this.updateProperties();
   }
 
+  /**
+   * Set the related property value by a readable string.
+   * @param {Object} properties
+   */
   setPropertiesFromDisplay(properties) {
     Object.keys(properties).forEach((propertyName) => {
       const displayValue = properties[propertyName];
@@ -176,6 +193,11 @@ class SliderDiscrete extends HTMLElement {
     this.updateProperties();
   }
 
+  /**
+   * Get the required attributes
+   * @param {...string} propertyNames
+   * @returns {Object} - A property map
+   */
   getCSSProperties(...propertyNames) {
     const properties = {};
 
@@ -188,6 +210,9 @@ class SliderDiscrete extends HTMLElement {
     return properties;
   }
 
+  /**
+   * Done the change.
+   */
   updateProperties() {
     const {
       valueMin, valueMax, value, step,
@@ -216,9 +241,16 @@ class SliderDiscrete extends HTMLElement {
   }
 }
 
+SliderDiscrete.styleURL = 'slider.css';
+
+/**
+ * @type {SliderDiscrete}
+ */
+SliderDiscrete.current = null;
+
 /**
  * @readonly
- * @enum {String}
+ * @enum {string}
  */
 SliderDiscrete.cssPropertyNames = {
   valueMin: '--value-min',

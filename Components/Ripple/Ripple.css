@@ -1,92 +1,94 @@
 /**
- * COPYRIGHT
- * @Author: Wang Hua
- * @License: MIT
- * @Version: 1.1327-20180130
- * 
- * 
+ * @version: 1.1328-20180205
  */
+
 [O] {
-	position: relative;
-	overflow: hidden;
-	cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
 }
+
 [O] > * {
-	pointer-events: none;
+  pointer-events: none;
 }
 
 [O]::before,
 [O]::after {
-	position: absolute;
-	background-color: rgba(0, 0, 0, .06);
-	opacity: 0;
-	pointer-events: none;
-	content: '';
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.06);
+  opacity: 0;
+  pointer-events: none;
+  content: '';
 }
 
 [O]::before {
-	top: -50%;
-	left: -50%;
-	width: 200%;
-	height: 200%;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
 }
 
 [O]::after {
-	/* 使 :after 位于元素左上部分，中点与元素左上点重合 */
-	top: calc(var(--ripple-diameter) / -2);
-	left: calc(var(--ripple-diameter) / -2);
-
-	width: var(--ripple-diameter, 60px);
-	height: var(--ripple-diameter, 60px);
-	transform: translate(var(--ripple-center, 0));
-	transform-origin: center center;
-	border-radius: 50%;
+  /* 使 :after 位于元素左上部分，中点与元素左上点重合 */
+  top: calc(var(--ripple-diameter) / -2);
+  left: calc(var(--ripple-diameter) / -2);
+  width: var(--ripple-diameter, 60px);
+  height: var(--ripple-diameter, 60px);
+  transform: translate(var(--ripple-center, 0));
+  transform-origin: center center;
+  border-radius: 50%;
 }
 
 [O]:hover::before,
 [O]:hover::after {
-	will-change: opacity,transform;
+  will-change: opacity, transform;
 }
 
 [O].ripple-running::before {
-	opacity: 1;
-	animation: 83ms ripple-opacity-in forwards;
+  opacity: 1;
+  animation: 83ms ripple-opacity-in forwards;
 }
 
 [O].ripple-running::after {
-	opacity: 1;
-	animation: 300ms ripple-running forwards, 83ms opacity-in forwards;
+  opacity: 1;
+  animation: 300ms ripple-running forwards, 83ms opacity-in forwards;
 }
 
 [O].ripple-ended::before,
 [O].ripple-ended::after {
-	transform: translate(var(--ripple-center, 0)) scale(var(--ripple-scale, 1));
-	animation: 83ms ripple-opacity-out forwards;
+  transform: translate(var(--ripple-center, 0)) scale(var(--ripple-scale, 1));
+  animation: 83ms ripple-opacity-out forwards;
 }
 
 @keyframes ripple-running {
-from {
-	transform: translate(var(--ripple-kiss-point, 0)) scale(1);
-	animation-timing-function: var(--ripple-surve);
+  from {
+    transform: translate(var(--ripple-kiss-point, 0)) scale(1);
+    animation-timing-function: var(--ripple-surve);
+  }
+
+  to {
+    transform: translate(var(--ripple-center, 0)) scale(var(--ripple-scale, 1));
+  }
 }
-to {
-	transform: translate(var(--ripple-center, 0)) scale(var(--ripple-scale, 1));
-}}
 
 @keyframes ripple-opacity-in {
-from {
-	opacity: 0;
-	animation-timing-function: linear;
+  from {
+    opacity: 0;
+    animation-timing-function: linear;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
-to {
-	opacity: 1;
-}}
 
 @keyframes ripple-opacity-out {
-from {
-	opacity: 1;
-	animation-timing-function: linear;
+  from {
+    opacity: 1;
+    animation-timing-function: linear;
+  }
+
+  to {
+    opacity: 0;
+  }
 }
-to {
-	opacity: 0;
-}}

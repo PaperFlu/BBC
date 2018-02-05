@@ -1,10 +1,19 @@
 /**
- * @version 1.2176-20180203
+ * @version 1.2177-20180205
  */
+
+import SliderDiscrete from './Components/slider/slider.js';
+import Ripple from './Components/Ripple/Ripple.js';
+
+// Custom Element
+SliderDiscrete.store('slider-discrete','./Components/slider/slider.css');
+
+// Click Effect
+Ripple.load();
 
 let root = window.location.pathname;
 if (root.endsWith('/')) {
-  (root = root.slice(0, -1));
+  root = root.slice(0, -1);
 }
 
 const mask = document.getElementById('mask');

@@ -1,10 +1,9 @@
 /**
- * @module Ripple
- * @version 1.1437-20180204
+ * @version 1.1438-20180205
  */
 
 /**
- * Set multiple properties in once.
+ * Set multiple property in once.
  * @param {HTMLElement} ele
  * @param {Object} properties
  */
@@ -18,8 +17,8 @@ const setStyleProperties = function setMultipleProperties(ele, properties) {
 /**
  * Replace the specified class with the other specified class.
  * @param {Element} ele - specified element.
- * @param {String} from - the class which would be replace.
- * @param {String} to - the new class.
+ * @param {string} from - the class which would be replace.
+ * @param {string} to - the new class.
  */
 const classSwitch = function ReplaceTheClassWithOneAnother(ele, [from, to]) {
   ele.classList.remove(from);
@@ -27,16 +26,31 @@ const classSwitch = function ReplaceTheClassWithOneAnother(ele, [from, to]) {
 };
 
 const Ripple = {
-  /** @type {{animating: boolean, focusing: boolean, current: Element|null}} */
+  /** @type {{animating: boolean, focusing: boolean, current: ?Element}} */
   state: {
     animating: false,
     focusing: false,
     current: null,
   },
 
+  /**
+   * @readonly
+   * @enum {string}
+   */
   animationNames: {
     running: 'ripple-running',
     ended: 'ripple-ended',
+  },
+
+  /**
+   * @readonly
+   * @enum {string}
+   */
+  stylePropertyNames: {
+    center: '--ripple-center',
+    clickPosition: '--ripple-kiss-point',
+    diameter: '--ripple-diameter',
+    scale: '--ripple-scale',
   },
 
   /**
@@ -60,9 +74,9 @@ const Ripple = {
 
   /**
    * Start the effect when mouse goes down.
-   * @param {Number} X
-   * @param {Number} Y
-   * @param {HTMLElement} ele
+   * @param {number} X
+   * @param {number} Y
+   * @param {Element} ele
    * @event document~start
    */
   start({ offsetX: X, offsetY: Y, target }) {
@@ -77,11 +91,12 @@ const Ripple = {
 
     // The ripple's diameter is 60% of the longer one between the width and the height.
     const diameter = Math.max(target.clientWidth, target.clientHeight) * 0.6;
+    const scale = Math.hypot(target.clientWidth, target.clientHeight) / diameter;
     setStyleProperties(target, {
-      '--ripple-center': `${target.clientWidth / 2}px, ${target.clientHeight / 2}px`,
-      '--ripple-kiss-point': `${X}px, ${Y}px`,
-      '--ripple-diameter': `${diameter}px`,
-      '--ripple-scale': Math.hypot(target.clientWidth, target.clientHeight) / diameter,
+      [Ripple.stylePropertyNames.center]: `${target.clientWidth / 2}px, ${target.clientHeight / 2}px`,
+      [Ripple.stylePropertyNames.clickPosition]: `${X}px, ${Y}px`,
+      [Ripple.stylePropertyNames.diameter]: `${diameter}px`,
+      [Ripple.stylePropertyNames.scale]: scale,
     });
     classSwitch(target, [Ripple.animationNames.ended, Ripple.animationNames.running]);
   },
@@ -99,28 +114,28 @@ const Ripple = {
     // Stop if it is still rippling.
     if (Ripple.state.animating) return;
 
-    Ripple.end(Ripple.state.current);
+    Ripple.end();
   },
 
   /**
    * End the effect at the end of the animation if the mouse has upped.
-   * @param {String} animationName
-   * @param {HTMLElement} target
+   * @param {string} animationName
+   * @param {Element} target
    * @event document~animationEnd
    */
   animationEnd({ animationName, target }) {
-    // Stop if the animation is not the one we want.
-    if (animationName !== Ripple.animationNames.running) return;
-
     // Stop if nothing is rippling.
     if (!Ripple.state.current) return;
+
+    // Stop if the animation is not the one we want.
+    if (animationName !== Ripple.animationNames.running) return;
 
     Ripple.state.animating = false;
 
     // Stop if it is still focusing.
     if (Ripple.state.focusing) return;
 
-    Ripple.end(Ripple.state.current);
+    Ripple.end();
   },
 
   /**
