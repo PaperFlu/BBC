@@ -1,0 +1,8 @@
+# JetBrains
+.idea
+
+# JSLint
+out
+
+# Lints
+*lintrc*

@@ -2,11 +2,12 @@
  * @version 1.2177-20180205
  */
 
+/* eslint-disable import/extensions */
 import SliderDiscrete from './Components/slider/slider.js';
 import Ripple from './Components/Ripple/Ripple.js';
 
 // Custom Element
-SliderDiscrete.store('slider-discrete','./Components/slider/slider.css');
+SliderDiscrete.store('slider-discrete', './Components/slider/slider.css');
 
 // Click Effect
 Ripple.load();

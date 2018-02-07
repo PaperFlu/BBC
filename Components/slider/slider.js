@@ -1,5 +1,5 @@
 /**
- * @version: 1.1637-20180204
+ * @version: 1.1642-20180205
  */
 
 /**
@@ -62,7 +62,7 @@ class SliderDiscrete extends HTMLElement {
     shadow.appendChild(this.valuer);
 
     this.type = this.dataset.step.includes(':') ? 'time' : 'number';
-    this.setPropertiesFromDisplay({
+    this.setPropertiesFromReadable({
       valueMin: this.dataset.valueMin,
       valueMax: this.dataset.valueMax,
       value: this.dataset.value || this.dataset.valueMin,
@@ -102,10 +102,7 @@ class SliderDiscrete extends HTMLElement {
       safeStep,
       safeValue,
     } = currentSlider;
-    let { valueMin, valueMax, step } = currentSlider.getCSSProperties('valueMin', 'valueMax', 'step');
-    valueMin = Number(valueMin);
-    valueMax = Number(valueMax);
-    step = Number(step);
+    const { valueMin, valueMax, step } = currentSlider.getCSSProperties('valueMin', 'valueMax', 'step');
 
     const pixelDifference = (screenX - currentSlider.X) / window.devicePixelRatio;
     const valueDifference = pixelDifference / (offsetWidth / range);
@@ -151,46 +148,59 @@ class SliderDiscrete extends HTMLElement {
     return checkedValue;
   }
 
+  setProperties(properties, valueType) {
+    const propertyNames = Object.keys(properties);
+
+    propertyNames.forEach((propertyName) => {
+      // Countable part.
+      const countableValue = valueType
+    })
+  }
+
   /**
    * Set the related property value by a countable number.
    * @param {Object} properties
    */
   setPropertiesFromCountable(properties) {
-    Object.keys(properties).forEach((propertyName) => {
-      const countableValue = properties[propertyName];
+    const propertyNames = Object.keys(properties);
 
+    propertyNames.forEach((propertyName) => {
+      // Countable part.
+      const countableValue = properties[propertyName];
       this.style.setProperty(this.constructor.cssPropertyNames[propertyName], countableValue);
 
+      // Readable part.
       let displayValue = countableValue;
       if (this.type === 'time') {
         displayValue = timeFromMinutes(countableValue);
       }
-
       this.dataset[propertyName] = displayValue;
     });
 
-    this.updateProperties();
+    this.updateTheRestPropertyValues(...propertyNames);
   }
 
   /**
    * Set the related property value by a readable string.
    * @param {Object} properties
    */
-  setPropertiesFromDisplay(properties) {
-    Object.keys(properties).forEach((propertyName) => {
-      const displayValue = properties[propertyName];
+  setPropertiesFromReadable(properties) {
+    const propertyNames = Object.keys(properties);
 
-      this.dataset[propertyName] = displayValue;
+    propertyNames.forEach((propertyName) => {
+      // Readable part.
+      const readableValue = properties[propertyName];
+      this.dataset[propertyName] = readableValue;
 
-      let countableValue = displayValue;
+      // Countable part.
+      let countableValue = readableValue;
       if (this.type === 'time') {
-        countableValue = minutesFromTime(displayValue);
+        countableValue = minutesFromTime(readableValue);
       }
-
       this.style.setProperty(this.constructor.cssPropertyNames[propertyName], countableValue);
     });
 
-    this.updateProperties();
+    this.updateTheRestPropertyValues(...propertyNames);
   }
 
   /**
@@ -212,17 +222,27 @@ class SliderDiscrete extends HTMLElement {
 
   /**
    * Done the change.
+   * @param {...string} propertyNames
    */
-  updateProperties() {
-    const {
-      valueMin, valueMax, value, step,
-    } = this.getCSSProperties('valueMin', 'valueMax', 'value', 'step');
-    this.range = valueMax - valueMin;
-    this.factorToInteger = Math.max(toIntegerFactor(valueMin), toIntegerFactor(step));
-    this.safeStep = Math.round(step * this.factorToInteger);
-    this.safeValue = Math.round(value * this.factorToInteger);
-
-    this.valuer.innerText = this.dataset.value;
+  updateTheRestPropertyValues(...propertyNames) {
+    const updateAll = propertyNames.length === 0;
+    if (
+      updateAll
+      || propertyNames.includes('valueMin')
+      || propertyNames.includes('valueMax')
+      || propertyNames.includes('step')
+    ) {
+      const { valueMin, valueMax, step } = this.getCSSProperties('valueMin', 'valueMax');
+      this.range = valueMax - valueMin;
+      this.factorToInteger = Math.max(
+        toIntegerFactor(valueMin),
+        toIntegerFactor(valueMax),
+        toIntegerFactor(step),
+      );
+    }
+    if (updateAll || propertyNames.includes('value')) {
+      this.valuer.innerText = this.dataset.value;
+    }
   }
 
   // noinspection JSUnusedGlobalSymbols
@@ -231,7 +251,9 @@ class SliderDiscrete extends HTMLElement {
   }
 
   static store(customName, cssPath) {
-    this.styleURL = cssPath;
+    // Determine the location.
+    if (cssPath) this.styleURL = cssPath;
+
     customElements.define(customName, this);
 
     this.onMouseMove = this.onMouseMove.bind(this);
@@ -241,14 +263,20 @@ class SliderDiscrete extends HTMLElement {
   }
 }
 
+/**
+ * The location of the style(.css) file.
+ * @type {string} - Absolute path.
+ */
 SliderDiscrete.styleURL = 'slider.css';
 
 /**
- * @type {SliderDiscrete}
+ * The sliding slider.
+ * @type {?SliderDiscrete}
  */
 SliderDiscrete.current = null;
 
 /**
+ * Corresponds to the custom CSS variables on which the style transformations is based.
  * @readonly
  * @enum {string}
  */

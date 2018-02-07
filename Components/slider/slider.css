@@ -1,79 +1,85 @@
 /**
- * COPYRIGHT
- * @Author: Wang Hua
- * @License: MIT
- * @Version: 1.1458-20180130
- * 
- * 
+ * @version: 1.1459-20180207
  */
-:host {
-	--track-height: .15em;
-	all: initial;
-	position: relative;
-	display: flex;
-	align-items: center;
-	width: 100%;
-	height: var(--track-height);
-	contain: layout style;
-	background: rgba(0,0,0,.13);
-	border-radius: 3px;
-	transition: background var(--standard-curve) 170ms;
 
-	--position: calc((var(--value) - var(--value-min)) / (var(--value-max) - var(--value-min)) * 100%);
+:host {
+  --track-height: 0.15em;
+
+  all: initial;
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: var(--track-height);
+  contain: layout style;
+  background: rgba(0, 0, 0, 0.13);
+  border-radius: 3px;
+  transition: background var(--standard-curve) 170ms;
+
+  --position: calc((var(--value) - var(--value-min)) / (var(--value-max) - var(--value-min)) * 100%);
 }
+
 :host(:active) {
-	background: rgba(0,0,0,.18);
+  background: rgba(0, 0, 0, 0.18);
 }
-.fill,.thumb {
-	flex-shrink: 0;
-	background: #EC407A;
-	cursor: pointer;
-}
-.fill {
-	display: block;
-	content: '';
-	width: var(--position);
-	height: 100%;
-}
+
+.fill,
 .thumb {
-	--size: calc(var(--track-height) * 6);
-	position: relative;
-	left: calc(-1 * var(--size) / 2);
-	display: block;
-	content: '';
-	width: var(--size);
-	height: var(--size);
-	border-radius: 50%;
-	transform: scale(1);
-	transition: all linear 170ms;
+  flex-shrink: 0;
+  background: #ec407a;
+  cursor: pointer;
 }
+
+.fill {
+  display: block;
+  content: '';
+  width: var(--position);
+  height: 100%;
+}
+
+.thumb {
+  --size: calc(var(--track-height) * 6);
+
+  position: relative;
+  left: calc(-1 * var(--size) / 2);
+  display: block;
+  content: '';
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  transform: scale(1);
+  transition: all linear 170ms;
+}
+
 :host(:active) > .thumb {
-	transform: scale(0);
+  transform: scale(0);
 }
+
 .valuer {
-	--font-size: .7em;
-	--height: calc(var(--track-height) * 32);
-	--width: calc(var(--height) * 0.8);
-	--mask: url(bubble.svg) 0/var(--width) var(--height) no-repeat;
-	position: absolute;
-	left: var(--position);
-	bottom: 0;
-	display: block;
-	width: var(--width);
-	height: var(--height);
-	background: #EC407A;
-	-webkit-mask: var(--mask);
-	-webkit-mask: var(--mask);
-	transform: translate(calc(-1 * var(--width) / 2),0) scale(0);
-	transform-origin: 50% 100%;
-	transition: transform var(--standard-curve) 170ms;
-	text-align: center;
-	line-height: var(--width);
-	font-family: Roboto, Arial, sans-serif;
-	font-size: var(--font-size);
-	font-weight: 400;
-	color: #fff;
+  --font-size: 0.7em;
+  --height: calc(var(--track-height) * 32);
+  --width: calc(var(--height) * 0.8);
+  --mask: url(bubble.svg) 0/var(--width) var(--height) no-repeat;
+
+  position: absolute;
+  left: var(--position);
+  bottom: 0;
+  display: block;
+  width: var(--width);
+  height: var(--height);
+  background: #ec407a;
+  -webkit-mask: var(--mask);
+  transform: translate(calc(-1 * var(--width) / 2), 0) scale(0);
+  transform-origin: 50% 100%;
+  transition: transform var(--standard-curve) 170ms;
+  text-align: center;
+  line-height: var(--width);
+  font-family: Roboto, Arial, sans-serif;
+  font-size: var(--font-size);
+  font-weight: 400;
+  color: #fff;
 }
+
 :host(:active) .valuer {
-	transform: translate(calc(-1 * var(--width) / 2),calc(var(--track-height) * -6)) scale(1);
+  transform: translate(calc(-1 * var(--width) / 2), calc(var(--track-height) * -6)) scale(1);
 }
