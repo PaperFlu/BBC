@@ -62,7 +62,7 @@ class SliderDiscrete extends HTMLElement {
     shadow.appendChild(this.valuer);
 
     this.type = this.dataset.step.includes(':') ? 'time' : 'number';
-    this.setPropertiesFromReadable({
+    this.setProperties({
       valueMin: this.dataset.valueMin,
       valueMax: this.dataset.valueMax,
       value: this.dataset.value || this.dataset.valueMin,
@@ -118,7 +118,7 @@ class SliderDiscrete extends HTMLElement {
     newValue = (valueDifferenceBySafeStep + safeValue) / factorToInteger;
     newValue = currentSlider.constructor.checkValue(newValue, [valueMin, valueMax]);
 
-    currentSlider.setPropertiesFromCountable({ value: newValue });
+    currentSlider.setProperties({ value: newValue }, false);
 
     currentSlider.X = screenX;
   }
@@ -148,59 +148,64 @@ class SliderDiscrete extends HTMLElement {
     return checkedValue;
   }
 
-  setProperties(properties, valueType) {
+  setProperties(properties, readable = true) {
     const propertyNames = Object.keys(properties);
 
     propertyNames.forEach((propertyName) => {
-      // Countable part.
-      const countableValue = valueType
-    })
-  }
+      const value = properties[propertyName];
+      let countableValue = value;
+      let readableValue = value;
+      if (readable) {
+        switch (this.type) {
+          case 'time': {
+            countableValue = minutesFromTime(value);
+            break;
+          }
+          default: {
+            break;
+          }
+        }
+      } else {
+        switch (this.type) {
+          case 'time': {
+            readableValue = timeFromMinutes(value);
+            break;
+          }
+          default: {
+            break;
+          }
+        }
+      }
 
-  /**
-   * Set the related property value by a countable number.
-   * @param {Object} properties
-   */
-  setPropertiesFromCountable(properties) {
-    const propertyNames = Object.keys(properties);
-
-    propertyNames.forEach((propertyName) => {
-      // Countable part.
-      const countableValue = properties[propertyName];
+      // CSS countable part.
       this.style.setProperty(this.constructor.cssPropertyNames[propertyName], countableValue);
 
-      // Readable part.
-      let displayValue = countableValue;
-      if (this.type === 'time') {
-        displayValue = timeFromMinutes(countableValue);
-      }
-      this.dataset[propertyName] = displayValue;
-    });
-
-    this.updateTheRestPropertyValues(...propertyNames);
-  }
-
-  /**
-   * Set the related property value by a readable string.
-   * @param {Object} properties
-   */
-  setPropertiesFromReadable(properties) {
-    const propertyNames = Object.keys(properties);
-
-    propertyNames.forEach((propertyName) => {
-      // Readable part.
-      const readableValue = properties[propertyName];
+      // HTML readable part.
       this.dataset[propertyName] = readableValue;
-
-      // Countable part.
-      let countableValue = readableValue;
-      if (this.type === 'time') {
-        countableValue = minutesFromTime(readableValue);
-      }
-      this.style.setProperty(this.constructor.cssPropertyNames[propertyName], countableValue);
     });
 
-    this.updateTheRestPropertyValues(...propertyNames);
+    // Get ready for the next change.
+    if (
+      propertyNames.includes('valueMin')
+      || propertyNames.includes('valueMax')
+      || propertyNames.includes('step')
+    ) {
+      const { valueMin, valueMax, step = 0 } = this.getCSSProperties('valueMin', 'valueMax', 'step');
+      this.range = valueMax - valueMin;
+      this.factorToInteger = Math.max(
+        toIntegerFactor(valueMin),
+        toIntegerFactor(valueMax),
+        toIntegerFactor(step),
+      );
+      this.safeStep = Math.round(step * this.factorToInteger);
+    }
+    if (propertyNames.includes('value')) {
+      // Valuer update.
+      this.valuer.innerText = this.dataset.value;
+
+      const { value } = this.getCSSProperties('value');
+      this.safeValue = Math.round(value * this.factorToInteger);
+    }
   }
 
   /**
@@ -218,31 +223,6 @@ class SliderDiscrete extends HTMLElement {
     });
 
     return properties;
-  }
-
-  /**
-   * Done the change.
-   * @param {...string} propertyNames
-   */
-  updateTheRestPropertyValues(...propertyNames) {
-    const updateAll = propertyNames.length === 0;
-    if (
-      updateAll
-      || propertyNames.includes('valueMin')
-      || propertyNames.includes('valueMax')
-      || propertyNames.includes('step')
-    ) {
-      const { valueMin, valueMax, step } = this.getCSSProperties('valueMin', 'valueMax');
-      this.range = valueMax - valueMin;
-      this.factorToInteger = Math.max(
-        toIntegerFactor(valueMin),
-        toIntegerFactor(valueMax),
-        toIntegerFactor(step),
-      );
-    }
-    if (updateAll || propertyNames.includes('value')) {
-      this.valuer.innerText = this.dataset.value;
-    }
   }
 
   // noinspection JSUnusedGlobalSymbols
